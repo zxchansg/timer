@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Game Master Stopwatch</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: #f0f0f0;
+        padding: 20px;
+    }
+
+    h1 {
+        margin-bottom: 30px;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .team {
+        background: white;
+        width: 320px;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .time {
+        font-size: 50px;
+        font-weight: bold;
+        margin: 25px 0;
+        letter-spacing: 2px;
+    }
+
+    button {
+        font-size: 18px;
+        padding: 14px 22px;
+        margin: 5px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .start {
+        background: #28a745;
+        color: white;
+    }
+
+    .pause {
+        background: #ffc107;
+    }
+
+    .reset {
+        background: #dc3545;
+        color: white;
+    }
+</style>
+
+</head>
+
+<body>
+
+<h1>🏁 Game Master Stopwatch</h1>
+
+<div class="container">
+
+    <div class="team">
+        <h2>Team A</h2>
+        <div id="timeA" class="time">00:00:00</div>
+
+        <button class="start" onclick="startTimer('A')">
+            Start
+        </button>
+
+        <button class="pause" onclick="pauseTimer('A')">
+            Pause
+        </button>
+
+        <button class="reset" onclick="resetTimer('A')">
+            Reset
+        </button>
+    </div>
+
+
+    <div class="team">
+        <h2>Team B</h2>
+
+        <div id="timeB" class="time">
+            00:00:00
+        </div>
+
+        <button class="start" onclick="startTimer('B')">
+            Start
+        </button>
+
+        <button class="pause" onclick="pauseTimer('B')">
+            Pause
+        </button>
+
+        <button class="reset" onclick="resetTimer('B')">
+            Reset
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+var timers = {
+    A: {
+        elapsed: 0,
+        startTime: 0,
+        running: false
+    },
+
+    B: {
+        elapsed: 0,
+        startTime: 0,
+        running: false
+    }
+};
+
+
+// Update display smoothly
+setInterval(function() {
+
+    updateDisplay("A");
+    updateDisplay("B");
+
+}, 10);
+
+
+
+function formatTime(milliseconds) {
+
+    var minutes = Math.floor(milliseconds / 60000);
+
+    var seconds = Math.floor(
+        (milliseconds % 60000) / 1000
+    );
+
+    var hundredths = Math.floor(
+        (milliseconds % 1000) / 10
+    );
+
+
+    return String(minutes).padStart(2,"0")
+        + ":"
+        + String(seconds).padStart(2,"0")
+        + ":"
+        + String(hundredths).padStart(2,"0");
+
+}
+
+
+
+function currentTime(team) {
+
+    if (timers[team].running) {
+
+        return timers[team].elapsed +
+            (performance.now() -
+            timers[team].startTime);
+
+    }
+
+    return timers[team].elapsed;
+
+}
+
+
+
+function updateDisplay(team) {
+
+    document.getElementById(
+        "time" + team
+    ).innerHTML = formatTime(
+        currentTime(team)
+    );
+
+}
+
+
+
+function startTimer(team) {
+
+    if (!timers[team].running) {
+
+        timers[team].startTime =
+            performance.now();
+
+        timers[team].running = true;
+
+    }
+
+}
+
+
+
+function pauseTimer(team) {
+
+    if (timers[team].running) {
+
+        timers[team].elapsed =
+            currentTime(team);
+
+        timers[team].running = false;
+
+    }
+
+}
+
+
+
+function resetTimer(team) {
+
+    timers[team].elapsed = 0;
+
+    timers[team].running = false;
+
+    updateDisplay(team);
+
+}
+
+</script>
+
+
+</body>
+
+</html>
